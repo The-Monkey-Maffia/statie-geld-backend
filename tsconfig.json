@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+      "target": "ES2020",   // Target ECMAScript version
+      "module": "CommonJS", // Use CommonJS modules
+      "outDir": "./dist",   // Output directory for compiled JavaScript
+      "rootDir": "./src",   // Root directory of your source code
+      "strict": true,       // Enable strict type checking
+      "esModuleInterop": true, // Enable interoperability between CommonJS and ES modules
+      "skipLibCheck": true, // Skip type checking of declaration files
+      "forceConsistentCasingInFileNames": true, // Enforce consistent file naming
+      "resolveJsonModule": true, // Allow importing JSON files
+      "lib": ["ESNext", "DOM"], // List of libraries to include
+    },
+    "include": ["src/**/*.ts"], // Specify source files to include
+    "exclude": ["node_modules"]  // Specify files/folders to exclude
+  }
+  
