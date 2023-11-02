@@ -1,4 +1,4 @@
-import mysql, { Types } from "mysql"
+import mysql from "mysql"
 
 export class Database{
     host: string
@@ -20,5 +20,6 @@ export class Database{
             password: this.password,
             database: this.database
         })
+        return connection
     }
 }
