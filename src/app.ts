@@ -4,7 +4,6 @@ const port = 3000
 
 
 app.get('/get/goededoel/:naam', (req, res) => {
-  
 })
 
 app.post('/post/goededoelen', () => {
