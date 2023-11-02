@@ -1,4 +1,4 @@
-import mysql from "mysql"
+import * as mysql from "mysql"
 
 export class Database{
     host: string
@@ -13,7 +13,7 @@ export class Database{
         this.database = database
     }
     
-    connect() {
+    connect(): mysql.Connection{
         const connection = mysql.createConnection({
             host: this.host,
             user: this.user,

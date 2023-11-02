@@ -1,3 +1,4 @@
+import * as mysql from "mysql" 
 import express from "express"
 import dotenv from 'dotenv';
 import { Database } from "./services/database";
@@ -23,11 +24,17 @@ app.get('/get/goededoel/:naam', (req, res) => {
 })
 
 app.post('/post/goededoelen', () => {
-
 })
 
 app.get('/get/drinks', () => {
 
+  connection.connect((err: mysql.MysqlError) => {
+    if (err) {
+        console.error('Error connecting to the database:', err.message);
+        return;
+    }
+    console.log('Connected to the database');
+  });
 })
 
 app.post('/post/drinks', () => {
