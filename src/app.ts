@@ -12,7 +12,7 @@ dotenv.config();
 
 const database = new Database(
   process.env.HOST!,
-  process.env.USER!,
+  process.env.USERNAME!,
   process.env.PASSWORD!,
   process.env.DATABASE!
 )
@@ -28,13 +28,13 @@ app.post('/post/goededoelen', () => {
 
 app.get('/get/drinks', () => {
 
-  connection.connect((err: mysql.MysqlError) => {
+connection.connect((err) => {
     if (err) {
         console.error('Error connecting to the database:', err.message);
         return;
     }
     console.log('Connected to the database');
-  });
+});
 })
 
 app.post('/post/drinks', () => {
