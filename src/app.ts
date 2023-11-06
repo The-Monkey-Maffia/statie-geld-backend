@@ -24,20 +24,29 @@ const database = new Database(
 const connection = database.connect()
 
 
-app.get('/get/goededoel/:naam', (req, res) => {
-  const name = req.params.naam;
-  console.log(name)
-  connection.query('SELECT * FROM charity WHERE name = ?', [name], (error, results) => {
-    console.log(error)
-    if (error) {
-      res.status(500).json({ error: 'Error in query execution' });
-      return;
-    }
-    res.json({ data: results }); // Send the results as JSON
-  })
+app.get('/get/goededoel/:naam?', (req: express.Request, res: express.Response) => {
+  if (!req.params.naam) {
+    connection.query('SELECT *  FROM charity', (error, results) => {
+      if (error) {
+        res.status(500).json({ error: 'Error in query execution'})
+        return
+      }
+      res.json({ data: results})
+    })
+  } else {
+    const name = req.params.naam;
+    console.log(name)
+    connection.query('SELECT * FROM charity WHERE name = ?', [name], (error, results) => {
+      if (error) {
+        res.status(500).json({ error: 'Error in query execution' });
+        return;
+      }
+      res.json({ data: results }); // Send the results as JSON
+    })
+  }
 })
 
-app.post('/post/vote/', (req, res) => {
+app.post('/post/vote/', (req: express.Request, res: express.Response) => {
   const hardware_id = parseInt(req.body.hardware_id)
   const Vote_name = req.body.Vote_name
   console.log(hardware_id)
@@ -64,7 +73,8 @@ app.post('/post/vote/', (req, res) => {
     }
   })
 })
-app.get('/get/drinks/:barcode_id', (req, res) => {
+
+app.get('/get/drinks/:barcode_id', (req: express.Request, res: express.Response) => {
 
   const barcode_id = req.params.barcode_id;
   console.log(barcode_id)
