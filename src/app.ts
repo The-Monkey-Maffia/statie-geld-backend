@@ -2,6 +2,7 @@ import express from "express"
 import dotenv from 'dotenv';
 import { Database } from "./services/database";
 import bodyParser from 'body-parser';
+import { RowDataPacket } from "mysql2";
 
 
 
@@ -39,8 +40,10 @@ app.get('/get/goededoel/:naam', (req, res) => {
 app.post('/post/vote/', (req, res) => {
   const hardware_id = parseInt(req.body.hardware_id)
   const Vote_name = req.body.Vote_name
-  connection.query("SELECT * FROM users where hardware_id = ?", [hardware_id], (error, results: any)=>{
-    if(!results){
+  console.log(hardware_id)
+  connection.query("SELECT * FROM users where hardware_id = ?", [hardware_id], (error, results: RowDataPacket[])=>{
+    console.log(results)
+    if(results.length <= 0){
       connection.query("INSERT INTO users (`hardware_id`) VALUES ('?')", [hardware_id], (error, results)=>{
         if(error){
           console.log(error)
@@ -61,7 +64,6 @@ app.post('/post/vote/', (req, res) => {
     }
   })
 })
-
 app.get('/get/drinks/:barcode_id', (req, res) => {
 
   const barcode_id = req.params.barcode_id;
