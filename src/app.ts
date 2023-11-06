@@ -29,10 +29,10 @@ app.get('/get/goededoel/:naam?', (req: express.Request, res: express.Response) =
     // Get all from charity
     connection.query('SELECT *  FROM charity', (error, results) => {
       if (error) {
-        res.status(500).json({ error: 'Error in query execution'})
+        res.status(500).json({ error: 'Error in query execution' })
         return
       }
-      res.json({ data: results})
+      res.json({ data: results })
     })
   } else {
     const name = req.params.naam;
@@ -55,27 +55,27 @@ app.post('/post/vote/', (req: express.Request, res: express.Response) => {
   const Vote_name = req.body.Vote_name
   console.log(hardware_id)
   // Checks if hardware id already exists in DB
-  connection.query("SELECT * FROM users where hardware_id = ?", [hardware_id], (error, results: RowDataPacket[])=>{
+  connection.query("SELECT * FROM users where hardware_id = ?", [hardware_id], (error, results: RowDataPacket[]) => {
     console.log(results)
-    if(results.length <= 0){
+    if (results.length <= 0) {
       // Insert the hardware id in DB
-      connection.query("INSERT INTO users (`hardware_id`) VALUES ('?')", [hardware_id], (error, results)=>{
-        if(error){
+      connection.query("INSERT INTO users (`hardware_id`) VALUES ('?')", [hardware_id], (error, results) => {
+        if (error) {
           console.log(error)
           res.status(500).json({ error: 'Error in query execution by creating the user' });
           return;
-        } else{
+        } else {
           // Update vote on specific charity
-          connection.query("UPDATE charity SET aantal_votes = aantal_votes + 1 WHERE name = ? ", [Vote_name], (error, results)=> {
-            if(error){
+          connection.query("UPDATE charity SET aantal_votes = aantal_votes + 1 WHERE name = ? ", [Vote_name], (error, results) => {
+            if (error) {
               res.status(500).json({ error: 'Error in query execution' });
               return;
-            } 
+            }
             res.json({ data: results }); // Send the results as JSON
           })
         }
       })
-    } else{
+    } else {
       res.status(500).json({ error: 'you have already voted' });
     }
   })
@@ -97,8 +97,25 @@ app.get('/get/drinks/:barcode_id', (req: express.Request, res: express.Response)
   })
 })
 
-app.post('/post/drinks', () => {
-
+// POST: http://localhost:3000/post/drinks/bar/
+app.post('/post/drinks/bar', (req: express.Request, res: express.Response) => {
+  const barcode_id = parseInt(req.body.barcode_id)
+  connection.query("SELECT * FROM products WHERE barcode_id = ?", [barcode_id], (error, results: RowDataPacket[]) => {
+    console.log(results)
+    if (results.length <= 0) {
+      connection.query("INSERT INTO products (`barcode_id`) VALUES ('?')", [barcode_id], (error, results) => {
+        if (error) {
+          console.log(error)
+          res.status(500).json({ error: 'Error in query execution by creating the user' });
+          return;
+        } else {
+          res.json({ data: results }); // Send the results as JSON
+        }
+      })
+    } else {
+      res.status(500).json({ error: 'you have already voted' });
+    }
+  })
 })
 
 
