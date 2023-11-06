@@ -14,7 +14,7 @@ dotenv.config();
 
 const database = new Database(
   process.env.HOST!,
-  process.env.USERNAME!,
+  process.env.GEBRUIKER!,
   process.env.PASSWORD!,
   process.env.DATABASE!
 )
