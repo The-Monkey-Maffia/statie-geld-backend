@@ -36,7 +36,7 @@ app.get('/get/goededoel/:naam?', (req: express.Request, res: express.Response) =
     // Get all from charity
     connection.query('SELECT *  FROM charity', (error, results) => {
       if (error) {
-        res.status(500).json({ error: 'Error in query execution' })
+        res.status(500).json({ error: 'Error in Select query execution' })
         return
       }
       res.json({ data: results })
@@ -47,7 +47,7 @@ app.get('/get/goededoel/:naam?', (req: express.Request, res: express.Response) =
     // Get selected charity by name from db
     connection.query('SELECT * FROM charity WHERE name = ?', [name], (error, results) => {
       if (error) {
-        res.status(500).json({ error: 'Error in query execution' });
+        res.status(500).json({ error: 'Error in Select query execution' });
         return;
       }
       res.json({ data: results }); // Send the results as JSON
@@ -55,7 +55,40 @@ app.get('/get/goededoel/:naam?', (req: express.Request, res: express.Response) =
   }
 })
 
+app.post("/post/goededoel/", (req: express.Request, res:express.Response) => {
+  const Goededoel_Name = req.body.Name
+  const Link = req.body.Link
+  const Info = req.body.Info
+  connection.query("SELECT * FROM charity WHERE name = ?", [Goededoel_Name], (error, results: RowDataPacket[])=>{
+    if(error){
+      console.log(error)
+      res.status(500).json({ error: 'Error in Select query execution' });
+      return;
+    }
+    if(results.length <= 0){
+      connection.query("INSERT INTO charity (`name`, `link`, `info`) VALUES (?, ?, ?)", [Goededoel_Name, Link, Info],  (error, results: RowDataPacket[]) =>{
+        if (error) {
+          console.log(error)
+          res.status(500).json({ error: 'Error in query execution by creating the charity' });
+          return;
+        } else {
+          res.json({ data: results}); // Send the results as JSON
+        }
+      })
+    } else{
+      connection.query("UPDATE charity SET name = ?, link = ?, info = ?", [Goededoel_Name, Link, Info],  (error, results: RowDataPacket[]) => {
+        if (error) {
+          console.log(error)
+          res.status(500).json({ error: 'Error in query execution by updating the charity' });
+          return;
+        } else {
+          res.json({ data: results}); // Send the results as JSON
+        }
+      })
+    }
+  })
 
+})
 // POST: http://localhost:3000/post/vote/
 app.post('/post/vote/', (req: express.Request, res: express.Response) => {
   const hardware_id = req.body.hardware_id
@@ -72,7 +105,7 @@ app.post('/post/vote/', (req: express.Request, res: express.Response) => {
         // Update vote on specific charity
         connection.query("UPDATE charity SET aantal_votes = aantal_votes + 1 WHERE name = ? ", [Vote_name], (error, results) => {
           if (error) {
-            res.status(500).json({ error: 'Error in query execution' });
+            res.status(500).json({ error: 'Error in query execution by updating the charity' });
             return;
           }
           res.json({ data: results , uuid: uinqiueID}); // Send the results as JSON
@@ -81,7 +114,11 @@ app.post('/post/vote/', (req: express.Request, res: express.Response) => {
     })
   } else{
     connection.query("SELECT * FROM users where hardware_id = ?", [hardware_id], (error, results: RowDataPacket[]) => {
-      console.log(results)
+      if(error){
+        console.log(error)
+        res.status(500).json({ error: 'Error in Select query execution' });
+        return;
+      }
       if (results.length <= 0) {
         // Insert the hardware id in DB
         const uinqiueID: string = uuidv4();
@@ -94,7 +131,7 @@ app.post('/post/vote/', (req: express.Request, res: express.Response) => {
             // Update vote on specific charity
             connection.query("UPDATE charity SET aantal_votes = aantal_votes + 1 WHERE name = ? ", [Vote_name], (error, results) => {
               if (error) {
-                res.status(500).json({ error: 'Error in query execution' });
+                res.status(500).json({ error: 'Error in query execution by updating the charity' });
                 return;
               }
               res.json({ data: results, uuid: uinqiueID}); // Send the results as JSON
@@ -102,7 +139,7 @@ app.post('/post/vote/', (req: express.Request, res: express.Response) => {
           }
         })
       } else {
-        res.status(500).json({ error: 'you have already voted'});
+        res.status(403).json({ error: 'you have already voted'});
       }
     })
   }
@@ -118,7 +155,7 @@ app.get('/get/drinks/:barcode_id', (req: express.Request, res: express.Response)
   connection.query('SELECT * FROM products WHERE barcode_id = ?', [barcode_id], (error, results) => {
     console.log(error)
     if (error) {
-      res.status(500).json({ error: 'Error in query execution' });
+      res.status(500).json({ error: 'Error in Select query execution' });
       return;
     }
     res.json({ data: results }); // Send the results as JSON
@@ -129,19 +166,24 @@ app.get('/get/drinks/:barcode_id', (req: express.Request, res: express.Response)
 app.post('/post/drinks/bar', (req: express.Request, res: express.Response) => {
   const barcode_id = parseInt(req.body.barcode_id)
   connection.query("SELECT * FROM products WHERE barcode_id = ?", [barcode_id], (error, results: RowDataPacket[]) => {
+    if(error){
+      console.log(error)
+      res.status(500).json({ error: 'Error in Select query execution' });
+      return;
+    }
     console.log(results)
     if (results.length <= 0) {
       connection.query("INSERT INTO products (`barcode_id`) VALUES ('?')", [barcode_id], (error, results) => {
         if (error) {
           console.log(error)
-          res.status(500).json({ error: 'Error in query execution by creating the user' });
+          res.status(500).json({ error: 'Error in query execution by creating the product' });
           return;
         } else {
           res.json({ data: results }); // Send the results as JSON
         }
       })
     } else {
-      res.status(500).json({ error: 'you have already voted' });
+      res.status(409).json({ error: 'Product with the provided barcode ID already exists' });
     }
   })
 })
