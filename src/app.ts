@@ -152,10 +152,8 @@ app.post('/post/drinks/info', (req: express.Request, res: express.Response) => {
   const name = req.body.name
   const type = req.body.type
   const inhoud = req.body.inhoud
-  connection.query("SELECT * FROM products WHERE barcode_id = ?", [barcode_id], (error, results: RowDataPacket[]) => {
-    console.log(results)
-    if (results.length <= 0) {
-      connection.query("UPDATE products SET name = ?, type = ?, inhoud = ? WHERE barcode_id = ? ", [name, type, inhoud, barcode_id], (error, results) => {
+
+    connection.query("UPDATE products SET name = ?, type = ?, inhoud = ? WHERE barcode_id = ? ", [name, type, inhoud, barcode_id], (error, results) => {
         if (error) {
           console.log(error)
           res.status(500).json({ error: 'Error in query execution by creating the user' });
@@ -164,10 +162,6 @@ app.post('/post/drinks/info', (req: express.Request, res: express.Response) => {
           res.json({ data: results }); // Send the results as JSON
         }
       })
-    } else {
-      res.status(500).json({ error: 'you have already voted' });
-    }
-  })
 })
 
 
