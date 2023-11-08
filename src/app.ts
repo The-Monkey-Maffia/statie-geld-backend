@@ -3,10 +3,12 @@ import dotenv from 'dotenv';
 import { Database } from "./services/database";
 import bodyParser from 'body-parser';
 import { RowDataPacket } from "mysql2";
+import cors from 'cors';
 
 
 
 const app = express()
+app.use(cors())
 const port = 3000
 // Parse application/json
 app.use(bodyParser.json());
