@@ -85,6 +85,21 @@ app.post("/post/goededoel/", (req: express.Request, res:express.Response) => {
   })
 
 })
+
+
+app.post("/post/goededoel/del/", (req: express.Request, res:express.Response) => {
+  const Goededoel_Name = req.body.Name
+  connection.query("DELETE FROM charity WHERE name = ?", [Goededoel_Name], (error, results: RowDataPacket[])=>{
+    if(error){
+      console.log(error)
+      res.status(500).json({ error: 'Error in Select query execution' });
+      return;
+    } else {
+      res.json({ data: results}); // Send the results as JSON
+    }
+  })
+})
+
 // POST: http://localhost:3000/post/vote/
 app.post('/post/vote/', (req: express.Request, res: express.Response) => {
   const hardware_id = req.body.hardware_id
