@@ -357,7 +357,7 @@ app.delete("/delete/money_donated", (req, res) => {
     return;
   }
   const Id = req.body.Id;
-  connection.query("DELETE FROM money_donated where id = ?" [Id], (error, results) =>{
+  connection.query("DELETE FROM money_donated where id = ?", [Id], (error, results) =>{
     if (error) {
       console.log(error)
       res.status(500).json({ error: 'Error in query execution by creating the user' });
