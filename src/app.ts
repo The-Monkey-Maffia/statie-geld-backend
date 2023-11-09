@@ -24,6 +24,7 @@ const database = new Database(
   process.env.PASSWORD!,
   process.env.DATABASE!
 )
+const APIKEY = process.env.API_KEY!;
 const connection = database.connect()
 
 // GET: http://localhost:3000/get/goededoel/test
@@ -52,6 +53,10 @@ app.get('/get/goededoel/:naam?', (req: express.Request, res: express.Response) =
 })
 
 app.post("/post/goededoel/", (req: express.Request, res: express.Response) => {
+  if(req.body.API_KEY != APIKEY){
+    res.status(403).json({error: "You need to have the right api key"})
+    return;
+  }
   const Goededoel_Name = req.body.Name
   const Link = req.body.Link
   const Info = req.body.Info
@@ -88,6 +93,10 @@ app.post("/post/goededoel/", (req: express.Request, res: express.Response) => {
 
 
 app.post("/post/goededoel/del/", (req: express.Request, res: express.Response) => {
+  if(req.body.API_KEY != APIKEY){
+    res.status(403).json({error: "You need to have the right api key"})
+    return;
+  }
   const Goededoel_Name = req.body.Name
   connection.query("DELETE FROM charity WHERE name = ?", [Goededoel_Name], (error, results: RowDataPacket[]) => {
     if (error) {
@@ -175,6 +184,10 @@ app.get('/get/drinks/:barcode_id', (req: express.Request, res: express.Response)
 
 // POST: http://localhost:3000/post/drinks/bar/
 app.post('/post/drinks/bar', (req: express.Request, res: express.Response) => {
+  if(req.body.API_KEY != APIKEY){
+    res.status(403).json({error: "You need to have the right api key"})
+    return;
+  }
   const barcode_id = parseInt(req.body.barcode_id)
   connection.query("SELECT * FROM products WHERE barcode_id = ?", [barcode_id], (error, results: RowDataPacket[]) => {
     if (error) {
@@ -201,6 +214,10 @@ app.post('/post/drinks/bar', (req: express.Request, res: express.Response) => {
 
 // POST: http://localhost:3000/post/drinks/info/
 app.post('/post/drinks/info', (req: express.Request, res: express.Response) => {
+  if(req.body.API_KEY != APIKEY){
+    res.status(403).json({error: "You need to have the right api key"})
+    return;
+  }
   const barcode_id = parseInt(req.body.barcode_id)
   const name = req.body.name
   const type = req.body.type
@@ -229,6 +246,10 @@ app.get("/get/users", (req, res) => {
   })
 })
 app.delete("/delete/users", (req, res) => {
+  if(req.body.API_KEY != APIKEY){
+    res.status(403).json({error: "You need to have the right api key"})
+    return;
+  }
   const Hardware_Id = req.body.Hardware_Id
   if (Hardware_Id) {
     connection.query("DELETE FROM users WHERE hardware_id = ?", [Hardware_Id], (error, results) => {
@@ -258,6 +279,10 @@ app.delete("/delete/users", (req, res) => {
 
 // UPDATE
 app.post("/post/money_raised/update/", (req, res) => {
+  if(req.body.API_KEY != APIKEY){
+    res.status(403).json({error: "You need to have the right api key"})
+    return;
+  }
   const Id = req.body.Id;
   const amount = req.body.amount;
   const comment = req.body.comment
@@ -275,6 +300,10 @@ app.post("/post/money_raised/update/", (req, res) => {
 
 // INSERT
 app.post("/post/money_raised/insert/", (req, res) => {
+  if(req.body.API_KEY != APIKEY){
+    res.status(403).json({error: "You need to have the right api key"})
+    return;
+  }
   const amount = req.body.amount;
   const comment = req.body.comment
 
@@ -290,9 +319,9 @@ app.post("/post/money_raised/insert/", (req, res) => {
 })
 
 // SELECT
-app.get("/post/money_raised/select/", (req, res) => {
+app.get("/get/money_raised/select/", (req, res) => {
 
-  connection.query("SELECT * FROM users", (error, results) => {
+  connection.query("SELECT * FROM money_raised", (error, results) => {
     if (error) {
       console.log(error)
       res.status(500).json({ error: 'Error in query execution by creating the user' });
@@ -305,6 +334,10 @@ app.get("/post/money_raised/select/", (req, res) => {
 
 // DELETE
 app.post("/post/money_raised/delete/", (req, res) => {
+  if(req.body.API_KEY != APIKEY){
+    res.status(403).json({error: "You need to have the right api key"})
+    return;
+  }
   const Id = req.body.Id;
 
   connection.query("DELETE FROM money_raised WHERE id = ?", [Id], (error, results) => {
@@ -318,9 +351,41 @@ app.post("/post/money_raised/delete/", (req, res) => {
   })
 })
 
+app.delete("/delete/money_donated", (req, res) => {
+  if(req.body.API_KEY != APIKEY){
+    res.status(403).json({error: "You need to have the right api key"})
+    return;
+  }
+  const Id = req.body.Id;
+  connection.query("DELETE FROM money_donated where id = ?" [Id], (error, results) =>{
+    if (error) {
+      console.log(error)
+      res.status(500).json({ error: 'Error in query execution by creating the user' });
+      return;
+    } else {
+      res.json({ data: results }); // Send the results as JSON
+    }
+  })
+})
 
+app.get("/get/money_donated", (req, res) => {
+
+  connection.query("SELECT * FROM money_donated", (error, results) => {
+    if (error) {
+      console.log(error)
+      res.status(500).json({ error: 'Error in query execution by creating the user' });
+      return;
+    } else {
+      res.json({ data: results }); // Send the results as JSON
+    }
+  })
+})
 
 app.post("/post/money_donated", (req, res) => {
+  if(req.body.API_KEY != APIKEY){
+    res.status(403).json({error: "You need to have the right api key"})
+    return;
+  }
   const Id = req.body.Id;
   const amount = req.body.amount;
   const charity_id = req.body.charity_id
