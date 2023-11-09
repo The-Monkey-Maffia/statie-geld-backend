@@ -252,7 +252,33 @@ app.delete("/delete/users", (req, res) => {
     })
   }
 })
+app.post("/post/money_donated", (req, res) => {
+  const Id = req.body.Id;
+  const amount = req.body.amount;
+  const charity_id = req.body.charity_id
 
+  if(Id){
+    connection.query("UPDATE money_donated SET amount = ?, charity_id = ?  WHERE id = ? ", [amount, charity_id, Id], (error, results) => {
+      if (error) {
+        console.log(error)
+        res.status(500).json({ error: 'Error in query execution by creating the user' });
+        return;
+      } else {
+        res.json({ data: results }); // Send the results as JSON
+      }
+    })
+  } else{
+    connection.query("INSERT INTO money_donated (`amount`, `charity_id`) VALUES ('?', '?')", [amount, charity_id], (error, results) => {
+      if (error) {
+        console.log(error)
+        res.status(500).json({ error: 'Error in query execution by creating the product' });
+        return;
+      } else {
+        res.json({ data: results }); // Send the results as JSON
+      }
+    })
+  }
+})
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
