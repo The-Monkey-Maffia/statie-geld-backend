@@ -4,7 +4,7 @@ import { Database } from "./services/database";
 import bodyParser from 'body-parser';
 import { RowDataPacket } from "mysql2";
 import cors from 'cors';
-
+import { v4 as uuidv4 } from 'uuid';
 
 
 const app = express()
@@ -208,6 +208,17 @@ app.post('/post/drinks/info', (req: express.Request, res: express.Response) => {
       })
 })
 
+app.get("/get/users", (req, res) => {
+  connection.query("SELECT * FROM users", (error, results)=>{
+    if(error){
+      console.log(error)
+      res.status(500).json({error: "Error in Select query execution"})
+      return;
+    } else{
+      res.json({data: results})
+    }
+  })
+})
 
 
 app.listen(port, () => {
