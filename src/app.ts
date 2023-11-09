@@ -16,12 +16,6 @@ app.use(bodyParser.json());
 // Parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:5173'); // Replace this with your actual frontend's URL
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  next();
-});
 dotenv.config();
 
 const database = new Database(
@@ -218,6 +212,30 @@ app.get("/get/users", (req, res) => {
       res.json({data: results})
     }
   })
+})
+app.delete("/delete/users", (req, res) => {
+  const Hardware_Id = req.body.Hardware_Id
+  if(Hardware_Id){
+    connection.query("DELETE FROM users WHERE hardware_id = ?", [Hardware_Id], (error, results) =>{
+      if(error){
+        console.log(error)
+        res.status(500).json({error: "Error in Delete query execution"})
+        return;
+      } else{
+        res.json({data: results})
+      }
+    })
+  } else{
+    connection.query("DELETE FROM users", (error, results)=>{
+      if(error){
+        console.log(error)
+        res.status(500).json({error: "Error in Delete query execution"})
+        return;
+      } else{
+        res.json({data: results})
+      }
+    })
+  }
 })
 
 
