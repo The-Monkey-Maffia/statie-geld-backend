@@ -2,7 +2,7 @@ import express from "express"
 import dotenv from 'dotenv';
 import { Database } from "./services/database";
 import bodyParser from 'body-parser';
-import { RowDataPacket } from "mysql2";
+import { QueryError, RowDataPacket } from "mysql2";
 import cors from 'cors';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -36,12 +36,13 @@ const connection = database.connect()
 app.get('/get/goededoel/:naam?', (req: express.Request, res: express.Response) => {
   if (!req.params.naam) {
     // Get all from charity
-    connection.query('SELECT *  FROM charity', (error, results) => {
+    connection.query('SELECT *  FROM charity', (error: QueryError, results: [{aantal_votes: number, id: number, info: string, link: string, name: string}]) => {
       if (error) {
         res.status(500).json({ error: 'Error in Select query execution' })
         return
       }
-      res.json({ data: results })
+      
+      res.json({ data: results.sort((a, b) => b.aantal_votes - a.aantal_votes) })
     })
   } else {
     const name = req.params.naam;
