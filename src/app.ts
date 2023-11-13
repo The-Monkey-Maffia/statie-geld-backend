@@ -41,7 +41,6 @@ app.get('/get/goededoel/:naam?', (req: express.Request, res: express.Response) =
     })
   } else {
     const name = req.params.naam;
-    console.log(name)
     // Get selected charity by name from db
     connection.query('SELECT * FROM charity WHERE name = ?', [name], (error, results) => {
       if (error) {
@@ -114,7 +113,6 @@ app.post("/post/goededoel/del/", (req: express.Request, res: express.Response) =
 app.post('/post/vote/', (req: express.Request, res: express.Response) => {
   const hardware_id = req.body.hardware_id
   const Vote_name = req.body.Vote_name
-  console.log(hardware_id)
   if (!hardware_id) {
     const uinqiueID: string = uuidv4();
     connection.query("INSERT INTO users (`hardware_id`) VALUES (?)", [uinqiueID], (error, results) => {
@@ -171,11 +169,10 @@ app.post('/post/vote/', (req: express.Request, res: express.Response) => {
 app.get('/get/drinks/:barcode_id', (req: express.Request, res: express.Response) => {
 
   const barcode_id = req.params.barcode_id;
-  console.log(barcode_id)
   // Retrieves barcode from db
   connection.query('SELECT * FROM products WHERE barcode_id = ?', [barcode_id], (error, results) => {
-    console.log(error)
     if (error) {
+      console.log(error)
       res.status(500).json({ error: 'Error in Select query execution' });
       return;
     }
@@ -196,13 +193,12 @@ app.post('/post/drinks/bar', (req: express.Request, res: express.Response) => {
       res.status(500).json({ error: 'Error in Select query execution' });
       return;
     }
-    console.log(results)
-    if (results.length <= 0) {
+    if (results.length <= 0 ) {
       connection.query("INSERT INTO products (`barcode_id`) VALUES ('?')", [barcode_id], (error, results) => {
         if (error) {
           console.log(error)
           res.status(500).json({ error: 'Error in query execution by creating the product' });
-          return;
+          return; 
         } else {
           res.json({ data: results }); // Send the results as JSON
         }
@@ -223,7 +219,6 @@ app.post('/post/drinks/info', (req: express.Request, res: express.Response) => {
   const name = req.body.name
   const type = req.body.type
   const inhoud = req.body.inhoud
-
   connection.query("UPDATE products SET name = ?, type = ?, inhoud = ? WHERE barcode_id = ? ", [name, type, inhoud, barcode_id], (error, results) => {
     if (error) {
       console.log(error)
