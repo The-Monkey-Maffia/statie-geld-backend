@@ -62,7 +62,6 @@ app.post("/post/goededoel/", (req: express.Request, res: express.Response) => {
   const Info = req.body.Info
   connection.query("SELECT * FROM charity WHERE name = ?", [Goededoel_Name], (error, results: RowDataPacket[]) => {
     if (error) {
-      console.log(error)
       res.status(500).json({ error: 'Error in Select query execution' });
       return;
     }
@@ -186,7 +185,9 @@ app.post('/post/drinks/bar', (req: express.Request, res: express.Response) => {
     res.status(403).json({error: "You need to have the right api key"})
     return;
   }
+  console.log(req.body.barcode_id)
   const barcode_id = parseInt(req.body.barcode_id)
+  console.log(barcode_id)
   connection.query("SELECT * FROM products WHERE barcode_id = ?", [barcode_id], (error, results: RowDataPacket[]) => {
     if (error) {
       console.log(error)
