@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 const app = express()
 app.use(cors())
-const port = 3000
+const port = 3000 
 // Parse application/json
 app.use(bodyParser.json());
 
@@ -20,9 +20,10 @@ dotenv.config();
 
 const database = new Database(
   process.env.HOST!,
+  process.env.PORT!,
   process.env.GEBRUIKER!,
   process.env.PASSWORD!,
-  process.env.DATABASE!
+  process.env.DATABASE!,
 )
 const APIKEY = process.env.API_KEY!;
 const connection = database.connect()
