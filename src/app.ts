@@ -113,6 +113,8 @@ app.post("/post/goededoel/del/", (req: express.Request, res: express.Response) =
 app.post('/post/vote/', (req: express.Request, res: express.Response) => {
   const hardware_id = req.body.hardware_id
   const Vote_name = req.body.Vote_name
+  const Votes = req.body.Votes
+  const Vote_money = Votes * 0.15
   if (!hardware_id) {
     const uinqiueID: string = uuidv4();
     connection.query("INSERT INTO users (`hardware_id`) VALUES (?)", [uinqiueID], (error, results) => {
@@ -122,7 +124,7 @@ app.post('/post/vote/', (req: express.Request, res: express.Response) => {
         return;
       } else {
         // Update vote on specific charity
-        connection.query("UPDATE charity SET aantal_votes = aantal_votes + 1 WHERE name = ? ", [Vote_name], (error, results) => {
+        connection.query("UPDATE charity SET aantal_votes = aantal_votes + 1, money_donated = money_donated + ? WHERE name = ?;", [Vote_money ,Vote_name], (error, results) => {
           if (error) {
             res.status(500).json({ error: 'Error in query execution by updating the charity' });
             return;
@@ -148,7 +150,7 @@ app.post('/post/vote/', (req: express.Request, res: express.Response) => {
             return;
           } else {
             // Update vote on specific charity
-            connection.query("UPDATE charity SET aantal_votes = aantal_votes + 1 WHERE name = ? ", [Vote_name], (error, results) => {
+            connection.query("UPDATE charity SET aantal_votes = aantal_votes + 1, money_donated = money_donated + ? WHERE name = ?;", [Vote_money ,Vote_name], (error, results) => {
               if (error) {
                 res.status(500).json({ error: 'Error in query execution by updating the charity' });
                 return;
